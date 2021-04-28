@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@project-serum/borsh": "^0.1.1",
+    "@project-serum/pool": "^0.2.3",
+    "@project-serum/serum": "^0.13.34",
+    "@project-serum/sol-wallet-adapter": "^0.2.0",
+    "bignumber.js": "^9.0.1",
+    "buffer-layout": "^1.2.0",
+    "lodash-es": "^4.17.21",
+    "node-fetch": "^2.6.1"
+  }
+}
