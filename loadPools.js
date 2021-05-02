@@ -168,6 +168,7 @@ function loadPools(conn) {
                         poolInfo.pc.balance = new tokens_1.TokenAmount(0, pc.decimals);
                         liquidityPools[lp.mintAddress] = poolInfo;
                     });
+                    console.log(publicKeys);
                     return [4 /*yield*/, getMultipleAccounts(conn, publicKeys, exports.commitment)];
                 case 1:
                     multipleInfo = _a.sent();
@@ -181,7 +182,7 @@ function loadPools(conn) {
                                 switch (key) {
                                     case 'poolCoinTokenAccount': {
                                         var parsed = layouts_1.ACCOUNT_LAYOUT.decode(data);
-                                        poolInfo.coin.balance.wei = poolInfo.coin.balance.wei.plus(parsed.amount.toNumber());
+                                        poolInfo.coin.balance.wei = poolInfo.coin.balance.wei.plus(parsed.amount.toString());
                                         break;
                                     }
                                     case 'poolPcTokenAccount': {
@@ -198,7 +199,6 @@ function loadPools(conn) {
                                         break;
                                     }
                                     case 'ammId': {
-                                        //TODO:
                                         var parsed = void 0;
                                         if (version === 2) {
                                             parsed = layouts_1.AMM_INFO_LAYOUT.decode(data);

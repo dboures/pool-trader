@@ -33,7 +33,7 @@ function getAddressForWhat(address) {
 }
 exports.getAddressForWhat = getAddressForWhat;
 //TODO: Change to media
-exports.StepLPInfo = {
+exports.MediaLPInfo = {
     name: 'STEP-USDC',
     coin: __assign({}, tokens_1.TOKENS.STEP),
     pc: __assign({}, tokens_1.TOKENS.USDC),
@@ -60,4 +60,4 @@ exports.StepLPInfo = {
     serumVaultSigner: 'FbwU5U1Doj2PSKRJi7pnCny4dFPPJURwALkFhHwdHaMW'
 };
 //TODO: Change to media
-exports.LIQUIDITY_POOLS = [exports.StepLPInfo];
+exports.LIQUIDITY_POOLS = [exports.MediaLPInfo];

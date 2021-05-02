@@ -39,59 +39,42 @@ exports.__esModule = true;
 var web3_js_1 = require("@solana/web3.js");
 var swap_1 = require("./swap");
 var loadPools_1 = require("./loadPools");
-// export const STAKE_INFO_LAYOUT_V4 = struct([
-//     u64('state'),
-//     u64('nonce'),
-//     publicKey('poolLpTokenAccount'),
-//     publicKey('poolRewardTokenAccount'),
-//     u64('totalReward'),
-//     u128('perShare'),
-//     u64('perBlock'),
-//     u8('option'),
-//     publicKey('poolRewardTokenAccountB'),
-//     blob(7),
-//     u64('totalRewardB'),
-//     u128('perShareB'),
-//     u64('perBlockB'),
-//     u64('lastBlock'),
-//     publicKey('owner')
-//   ])
-// export const USER_STAKE_INFO_ACCOUNT_LAYOUT_V4 = struct([
-//     u64('state'),
-//     publicKey('poolId'),
-//     publicKey('stakerOwner'),
-//     u64('depositBalance'),
-//     u64('rewardDebt'),
-//     u64('rewardDebtB')
-//   ])
-//pubKey = 8eSs9VWE3CtURT1Go754RU76X3n1UyDMeFwf9qswq4MV
-function tryTrade() {
+function tryTrade(str) {
     return __awaiter(this, void 0, void 0, function () {
-        var conn, accountId, pools;
+        var conn, pools;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    conn = new web3_js_1.Connection('https://solana-api.projectserum.com/');
-                    accountId = 'CBuCnLe26faBpcBP2fktp4rp8abpcAnTWft6ZrP5Q4T';
+                    conn = new web3_js_1.Connection(str);
+                    console.log('started');
                     return [4 /*yield*/, loadPools_1.loadPools(conn)];
                 case 1:
                     pools = _a.sent();
-                    console.log(pools);
+                    //console.log(pools);
                     //swap
-                    return [4 /*yield*/, swap_1.swap(conn, '8eSs9VWE3CtURT1Go754RU76X3n1UyDMeFwf9qswq4MV', //Owner 
+                    return [4 /*yield*/, swap_1.swap(conn, '8eSs9VWE3CtURT1Go754RU76X3n1UyDMeFwf9qswq4MV', // Owner Solana Address 
                         //private key
-                        pools['3k8BDobgihmk72jVmXYLE168bxxQUhqqyESW4dQVktqC'], 
-                        // from USDC into STEP
-                        //from, to ,mints
-                        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 'StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT', 
-                        //ours
-                        '5UuT6nEQPGu8U4jbHqbkxfTdgF4rfSecJF8Cg1aokfhy', 'FtsduKNZPJicNhMYxPwpzkw1sFWiX85c36tJQ9JU5Nox', '0.1', 5)];
+                        pools['A5zanvgtioZGiJMdEyaKN4XQmJsp1p7uVxaq2696REvQ'], // poolInfo
+                        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // from mint
+                        'ETAtLmCmsoiEEKfNrHKJ2kYy3MoABhU6NQvpSfij5tDs', // to mint
+                        '5UuT6nEQPGu8U4jbHqbkxfTdgF4rfSecJF8Cg1aokfhy', // our USDC
+                        'DA2zNJqegyVcUFcbTo7Waq19m1WZwh8UGPs98pdn6xnG', // our Token
+                        '30000', //USDC tokens
+                        95)]; //% slippage;
                 case 2:
+                    //console.log(pools);
                     //swap
-                    _a.sent();
+                    _a.sent(); //% slippage;
                     return [2 /*return*/];
             }
         });
     });
 }
-tryTrade();
+tryTrade('https://solana-api.projectserum.com/');
+tryTrade('https://api.mainnet-beta.solana.com');
+tryTrade('https://raydium.rpcpool.com');
+setInterval(function () {
+    tryTrade('https://api.mainnet-beta.solana.com');
+    tryTrade('https://solana-api.projectserum.com/');
+    tryTrade('https://raydium.rpcpool.com');
+}, 2000);

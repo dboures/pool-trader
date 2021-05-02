@@ -4,7 +4,7 @@ import { NATIVE_SOL, TOKENS, TokenAmount } from './tokens'
 import { closeAccount, initializeAccount } from '@project-serum/serum/lib/token-instructions'
 import { swapInstruction } from './instructions'
 import { sendTransaction } from './txns'
-import { StepLPInfo } from './pool'
+import { MediaLPInfo } from './pool'
 import { ACCOUNT_LAYOUT } from './layouts'
 
 export const TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA')
@@ -144,14 +144,14 @@ export async function swap(
     const owner = new PublicKey(walletOwner);
 
     // console.log(poolInfo);
-    console.log('before swap amout');
+    // console.log('before swap amout');
     const { amountIn, amountOut } = getSwapOutAmount(poolInfo, fromCoinMint, toCoinMint, amount, slippage)
-    console.log('have swap amout');
+    // console.log('have swap amout');
   
     let fromMint = fromCoinMint
     let toMint = toCoinMint
   
-    console.log('mint checks');
+    // console.log('mint checks');
     if (fromMint === NATIVE_SOL.mintAddress) {
       fromMint = TOKENS.WSOL.mintAddress
     }
@@ -165,7 +165,7 @@ export async function swap(
     if (fromCoinMint === NATIVE_SOL.mintAddress) {
       wrappedSolAccount = await createTokenAccountIfNotExist(
         connection,
-        wrappedSolAccount?.toString(), // TODO: did it fuck up
+        wrappedSolAccount?.toString(),
         owner,
         TOKENS.WSOL.mintAddress,
         amountIn.wei.toNumber() + 1e7,
@@ -184,7 +184,7 @@ export async function swap(
         signers
       )
     }
-    console.log('create new tokens');
+    // console.log('create new tokens');
     const newFromTokenAccount = await createTokenAccountIfNotExist(
       connection,
       fromTokenAccount,
@@ -204,26 +204,26 @@ export async function swap(
       signers
     )
   
-    console.log('txn add');
+    // console.log('txn add');
 
     //TODO: Media Pool
     transaction.add(
       swapInstruction(
-        new PublicKey(StepLPInfo.programId),
-        new PublicKey(StepLPInfo.ammId),
-        new PublicKey(StepLPInfo.ammAuthority),
-        new PublicKey(StepLPInfo.ammOpenOrders),
-        new PublicKey(StepLPInfo.ammTargetOrders),
-        new PublicKey(StepLPInfo.poolCoinTokenAccount),
-        new PublicKey(StepLPInfo.poolPcTokenAccount),
-        new PublicKey(StepLPInfo.serumProgramId),
-        new PublicKey(StepLPInfo.serumMarket),
-        new PublicKey(StepLPInfo.serumBids),
-        new PublicKey(StepLPInfo.serumAsks),
-        new PublicKey(StepLPInfo.serumEventQueue),
-        new PublicKey(StepLPInfo.serumCoinVaultAccount),
-        new PublicKey(StepLPInfo.serumPcVaultAccount),
-        new PublicKey(StepLPInfo.serumVaultSigner),
+        new PublicKey(MediaLPInfo.programId),
+        new PublicKey(MediaLPInfo.ammId),
+        new PublicKey(MediaLPInfo.ammAuthority),
+        new PublicKey(MediaLPInfo.ammOpenOrders),
+        new PublicKey(MediaLPInfo.ammTargetOrders),
+        new PublicKey(MediaLPInfo.poolCoinTokenAccount),
+        new PublicKey(MediaLPInfo.poolPcTokenAccount),
+        new PublicKey(MediaLPInfo.serumProgramId),
+        new PublicKey(MediaLPInfo.serumMarket),
+        new PublicKey(MediaLPInfo.serumBids),
+        new PublicKey(MediaLPInfo.serumAsks),
+        new PublicKey(MediaLPInfo.serumEventQueue),
+        new PublicKey(MediaLPInfo.serumCoinVaultAccount),
+        new PublicKey(MediaLPInfo.serumPcVaultAccount),
+        new PublicKey(MediaLPInfo.serumVaultSigner),
         wrappedSolAccount ?? newFromTokenAccount,
         wrappedSolAccount2 ?? newToTokenAccount,
         owner,
@@ -251,6 +251,6 @@ export async function swap(
       )
     }
   
-    console.log('send txn');
-    return await sendTransaction(connection, privateKey, transaction, signers) // write our own
+    // console.log('send txn');
+    return await sendTransaction(connection, privateKey, transaction, signers) //signers is []
   }

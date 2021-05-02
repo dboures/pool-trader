@@ -1,5 +1,5 @@
 // @ts-ignore
-import { nu64, struct, u32, u8 } from 'buffer-layout'
+import { struct, u32, u8 } from 'buffer-layout'
 import { publicKey, u64, u128, bool } from '@project-serum/borsh'
 
 export const MINT_LAYOUT = struct([

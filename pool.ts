@@ -51,7 +51,7 @@ export interface LiquidityPoolInfo {
 
 
 //TODO: Change to media
-export const StepLPInfo = {
+export const MediaLPInfo = {
     name: 'STEP-USDC',
     coin: { ...TOKENS.STEP },
     pc: { ...TOKENS.USDC },
@@ -82,4 +82,4 @@ export const StepLPInfo = {
 
 
   //TODO: Change to media
-  export const LIQUIDITY_POOLS: LiquidityPoolInfo[] = [ StepLPInfo ]
+  export const LIQUIDITY_POOLS: LiquidityPoolInfo[] = [ MediaLPInfo ]

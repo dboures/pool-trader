@@ -152,6 +152,7 @@ export async function loadPools(conn)  {
         liquidityPools[lp.mintAddress] = poolInfo
       })
 
+      console.log(publicKeys);
       const multipleInfo = await getMultipleAccounts(conn, publicKeys, commitment)
 
       multipleInfo.forEach((info) => {
@@ -168,7 +169,7 @@ export async function loadPools(conn)  {
               case 'poolCoinTokenAccount': {
                 const parsed = ACCOUNT_LAYOUT.decode(data)
 
-                poolInfo.coin.balance.wei = poolInfo.coin.balance.wei.plus(parsed.amount.toNumber())
+                poolInfo.coin.balance.wei = poolInfo.coin.balance.wei.plus(parsed.amount.toString())
 
                 break
               }
@@ -190,7 +191,6 @@ export async function loadPools(conn)  {
                 break
               }
               case 'ammId': {
-                //TODO:
                 let parsed
                 if (version === 2) {
                   parsed = AMM_INFO_LAYOUT.decode(data)

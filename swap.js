@@ -140,7 +140,7 @@ function createTokenAccountIfNotExist(connection, account, owner, mintAddress, l
     });
 }
 exports.createTokenAccountIfNotExist = createTokenAccountIfNotExist;
-function swap(connection, walletOwner, poolInfo, fromCoinMint, toCoinMint, fromTokenAccount, toTokenAccount, amount, slippage) {
+function swap(connection, walletOwner, privateKey, poolInfo, fromCoinMint, toCoinMint, fromTokenAccount, toTokenAccount, amount, slippage) {
     return __awaiter(this, void 0, void 0, function () {
         var transaction, signers, owner, _a, amountIn, amountOut, fromMint, toMint, wrappedSolAccount, wrappedSolAccount2, newFromTokenAccount, newToTokenAccount;
         return __generator(this, function (_b) {
@@ -149,13 +149,10 @@ function swap(connection, walletOwner, poolInfo, fromCoinMint, toCoinMint, fromT
                     transaction = new web3_js_1.Transaction();
                     signers = [];
                     owner = new web3_js_1.PublicKey(walletOwner);
-                    // console.log(poolInfo);
-                    console.log('before swap amout');
                     _a = getSwapOutAmount(poolInfo, fromCoinMint, toCoinMint, amount, slippage), amountIn = _a.amountIn, amountOut = _a.amountOut;
-                    console.log('have swap amout');
                     fromMint = fromCoinMint;
                     toMint = toCoinMint;
-                    console.log('mint checks');
+                    // console.log('mint checks');
                     if (fromMint === tokens_1.NATIVE_SOL.mintAddress) {
                         fromMint = tokens_1.TOKENS.WSOL.mintAddress;
                     }
@@ -165,8 +162,7 @@ function swap(connection, walletOwner, poolInfo, fromCoinMint, toCoinMint, fromT
                     wrappedSolAccount = null;
                     wrappedSolAccount2 = null;
                     if (!(fromCoinMint === tokens_1.NATIVE_SOL.mintAddress)) return [3 /*break*/, 2];
-                    return [4 /*yield*/, createTokenAccountIfNotExist(connection, wrappedSolAccount === null || wrappedSolAccount === void 0 ? void 0 : wrappedSolAccount.toString(), // TODO: did it fuck up
-                        owner, tokens_1.TOKENS.WSOL.mintAddress, amountIn.wei.toNumber() + 1e7, transaction, signers)];
+                    return [4 /*yield*/, createTokenAccountIfNotExist(connection, wrappedSolAccount === null || wrappedSolAccount === void 0 ? void 0 : wrappedSolAccount.toString(), owner, tokens_1.TOKENS.WSOL.mintAddress, amountIn.wei.toNumber() + 1e7, transaction, signers)];
                 case 1:
                     wrappedSolAccount = _b.sent();
                     _b.label = 2;
@@ -176,17 +172,18 @@ function swap(connection, walletOwner, poolInfo, fromCoinMint, toCoinMint, fromT
                 case 3:
                     wrappedSolAccount2 = _b.sent();
                     _b.label = 4;
-                case 4:
-                    console.log('create new tokens');
-                    return [4 /*yield*/, createTokenAccountIfNotExist(connection, fromTokenAccount, owner, fromMint, null, transaction, signers)];
+                case 4: return [4 /*yield*/, createTokenAccountIfNotExist(connection, fromTokenAccount, owner, fromMint, null, transaction, signers)];
                 case 5:
                     newFromTokenAccount = _b.sent();
-                    return [4 /*yield*/, createTokenAccountIfNotExist(connection, toTokenAccount, owner, toMint, null, transaction, signers)];
+                    return [4 /*yield*/, createTokenAccountIfNotExist(connection, toTokenAccount, owner, toMint, null, transaction, signers)
+                        // console.log('txn add');
+                        //TODO: Media Pool
+                    ];
                 case 6:
                     newToTokenAccount = _b.sent();
-                    console.log('txn add');
+                    // console.log('txn add');
                     //TODO: Media Pool
-                    transaction.add(instructions_1.swapInstruction(new web3_js_1.PublicKey(pool_1.StepLPInfo.programId), new web3_js_1.PublicKey(pool_1.StepLPInfo.ammId), new web3_js_1.PublicKey(pool_1.StepLPInfo.ammAuthority), new web3_js_1.PublicKey(pool_1.StepLPInfo.ammOpenOrders), new web3_js_1.PublicKey(pool_1.StepLPInfo.ammTargetOrders), new web3_js_1.PublicKey(pool_1.StepLPInfo.poolCoinTokenAccount), new web3_js_1.PublicKey(pool_1.StepLPInfo.poolPcTokenAccount), new web3_js_1.PublicKey(pool_1.StepLPInfo.serumProgramId), new web3_js_1.PublicKey(pool_1.StepLPInfo.serumMarket), new web3_js_1.PublicKey(pool_1.StepLPInfo.serumBids), new web3_js_1.PublicKey(pool_1.StepLPInfo.serumAsks), new web3_js_1.PublicKey(pool_1.StepLPInfo.serumEventQueue), new web3_js_1.PublicKey(pool_1.StepLPInfo.serumCoinVaultAccount), new web3_js_1.PublicKey(pool_1.StepLPInfo.serumPcVaultAccount), new web3_js_1.PublicKey(pool_1.StepLPInfo.serumVaultSigner), wrappedSolAccount !== null && wrappedSolAccount !== void 0 ? wrappedSolAccount : newFromTokenAccount, wrappedSolAccount2 !== null && wrappedSolAccount2 !== void 0 ? wrappedSolAccount2 : newToTokenAccount, owner, Math.floor(amountIn.toWei().toNumber()), Math.floor(amountOut.toWei().toNumber())));
+                    transaction.add(instructions_1.swapInstruction(new web3_js_1.PublicKey(pool_1.MediaLPInfo.programId), new web3_js_1.PublicKey(pool_1.MediaLPInfo.ammId), new web3_js_1.PublicKey(pool_1.MediaLPInfo.ammAuthority), new web3_js_1.PublicKey(pool_1.MediaLPInfo.ammOpenOrders), new web3_js_1.PublicKey(pool_1.MediaLPInfo.ammTargetOrders), new web3_js_1.PublicKey(pool_1.MediaLPInfo.poolCoinTokenAccount), new web3_js_1.PublicKey(pool_1.MediaLPInfo.poolPcTokenAccount), new web3_js_1.PublicKey(pool_1.MediaLPInfo.serumProgramId), new web3_js_1.PublicKey(pool_1.MediaLPInfo.serumMarket), new web3_js_1.PublicKey(pool_1.MediaLPInfo.serumBids), new web3_js_1.PublicKey(pool_1.MediaLPInfo.serumAsks), new web3_js_1.PublicKey(pool_1.MediaLPInfo.serumEventQueue), new web3_js_1.PublicKey(pool_1.MediaLPInfo.serumCoinVaultAccount), new web3_js_1.PublicKey(pool_1.MediaLPInfo.serumPcVaultAccount), new web3_js_1.PublicKey(pool_1.MediaLPInfo.serumVaultSigner), wrappedSolAccount !== null && wrappedSolAccount !== void 0 ? wrappedSolAccount : newFromTokenAccount, wrappedSolAccount2 !== null && wrappedSolAccount2 !== void 0 ? wrappedSolAccount2 : newToTokenAccount, owner, Math.floor(amountIn.toWei().toNumber()), Math.floor(amountOut.toWei().toNumber())));
                     if (wrappedSolAccount) {
                         transaction.add(token_instructions_1.closeAccount({
                             source: wrappedSolAccount,
@@ -201,9 +198,10 @@ function swap(connection, walletOwner, poolInfo, fromCoinMint, toCoinMint, fromT
                             owner: owner
                         }));
                     }
-                    console.log('send txn');
-                    return [4 /*yield*/, txns_1.sendTransaction(connection, null, transaction, signers)]; // write our own
-                case 7: return [2 /*return*/, _b.sent()]; // write our own
+                    return [4 /*yield*/, txns_1.sendTransaction(connection, privateKey, transaction, signers)]; //signers is []
+                case 7: 
+                // console.log('send txn');
+                return [2 /*return*/, _b.sent()]; //signers is []
             }
         });
     });

@@ -35,23 +35,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 exports.__esModule = true;
+var web3_js_1 = require("@solana/web3.js");
 exports.commitment = 'confirmed';
 // transaction
-function sendTransaction(connection, wallet, transaction, signers) {
+function sendTransaction(connection, privateKey, transaction, signers) {
     if (signers === void 0) { signers = []; }
     return __awaiter(this, void 0, void 0, function () {
-        var signedTransaction;
+        var privateKeyDecoded, privAccount, signedTransaction;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, signTransaction(connection, wallet, transaction, signers)];
+                case 0:
+                    privateKeyDecoded = privateKey.split(',').map(function (s) { return parseInt(s); });
+                    privAccount = new web3_js_1.Account(privateKeyDecoded);
+                    signers.push(privAccount);
+                    return [4 /*yield*/, signTransaction(connection, transaction, signers)];
                 case 1:
                     signedTransaction = _a.sent();
                     return [4 /*yield*/, sendSignedTransaction(connection, signedTransaction)];
@@ -61,7 +59,7 @@ function sendTransaction(connection, wallet, transaction, signers) {
     });
 }
 exports.sendTransaction = sendTransaction;
-function signTransaction(connection, wallet, transaction, signers) {
+function signTransaction(connection, transaction, signers) {
     if (signers === void 0) { signers = []; }
     return __awaiter(this, void 0, void 0, function () {
         var _a;
@@ -72,12 +70,8 @@ function signTransaction(connection, wallet, transaction, signers) {
                     return [4 /*yield*/, connection.getRecentBlockhash(exports.commitment)];
                 case 1:
                     _a.recentBlockhash = (_b.sent()).blockhash;
-                    transaction.setSigners.apply(transaction, __spreadArrays([wallet.publicKey], signers.map(function (s) { return s.publicKey; })));
-                    if (signers.length > 0) {
-                        transaction.partialSign.apply(transaction, signers);
-                    }
-                    return [4 /*yield*/, wallet.signTransaction(transaction)];
-                case 2: return [2 /*return*/, _b.sent()];
+                    transaction.sign.apply(transaction, signers);
+                    return [2 /*return*/, transaction];
             }
         });
     });
@@ -90,12 +84,15 @@ function sendSignedTransaction(connection, signedTransaction) {
             switch (_a.label) {
                 case 0:
                     rawTransaction = signedTransaction.serialize();
+                    console.log('sending');
                     return [4 /*yield*/, connection.sendRawTransaction(rawTransaction, {
                             skipPreflight: true,
                             preflightCommitment: exports.commitment
                         })];
                 case 1:
                     txid = _a.sent();
+                    // console.log('txn complete');
+                    console.log(txid);
                     return [2 /*return*/, txid];
             }
         });
