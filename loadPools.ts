@@ -1,10 +1,11 @@
-import { getAddressForWhat, LIQUIDITY_POOLS } from "./pool"
+import { getAddressForWhat } from "./pool"
 import { PublicKey, Connection, Commitment, AccountInfo } from '@solana/web3.js'
 import { OpenOrders } from '@project-serum/serum'
 import { TokenAmount } from "./tokens"
 import { struct } from 'superstruct'
 import { ACCOUNT_LAYOUT, AMM_INFO_LAYOUT, AMM_INFO_LAYOUT_V3, AMM_INFO_LAYOUT_V4, MINT_LAYOUT } from "./layouts"
 import { cloneDeep } from 'lodash';
+import { LPINFO } from "./inputs"
 // eslint-disable-next-line
 const assert =require('assert');
 
@@ -133,35 +134,40 @@ export async function loadPools(conn)  {
       const liquidityPools = {} as any
       const publicKeys = [] as any
 
-      LIQUIDITY_POOLS.forEach((pool) => {
-        const { poolCoinTokenAccount, poolPcTokenAccount, ammOpenOrders, ammId, coin, pc, lp } = pool
+      // Need this info to start
+      const { poolCoinTokenAccount, poolPcTokenAccount, ammOpenOrders, ammId, coin, pc, lp } = LPINFO
+      console.log('push pubkeys');
+      publicKeys.push(
+        new PublicKey(poolCoinTokenAccount),
+        new PublicKey(poolPcTokenAccount),
+        new PublicKey(ammOpenOrders),
+        new PublicKey(ammId),
+        new PublicKey(lp.mintAddress)
+      )
 
-        publicKeys.push(
-          new PublicKey(poolCoinTokenAccount),
-          new PublicKey(poolPcTokenAccount),
-          new PublicKey(ammOpenOrders),
-          new PublicKey(ammId),
-          new PublicKey(lp.mintAddress)
-        )
+      console.log('clonedeep');
+      const poolInfo = cloneDeep(LPINFO)
 
-        const poolInfo = cloneDeep(pool)
+      console.log('init balances');
+      poolInfo.coin.balance = new TokenAmount(0, coin.decimals)
+      poolInfo.pc.balance = new TokenAmount(0, pc.decimals)
 
-        poolInfo.coin.balance = new TokenAmount(0, coin.decimals)
-        poolInfo.pc.balance = new TokenAmount(0, pc.decimals)
+      liquidityPools[lp.mintAddress] = poolInfo
+      const savedMintAddress = lp.mintAddress;
 
-        liquidityPools[lp.mintAddress] = poolInfo
-      })
-
-      console.log(publicKeys);
-      const multipleInfo = await getMultipleAccounts(conn, publicKeys, commitment)
+      // console.log(publicKeys);
+      console.log('getMultipleAccounts');
+      const multipleInfo = await getMultipleAccounts(conn, publicKeys, commitment) // json RPC, should be fine
 
       multipleInfo.forEach((info) => {
         if (info) {
           const address = info.publicKey.toBase58()
           const data = Buffer.from(info.account.data)
 
+          console.log('getAddressForWhat');
           const { key, lpMintAddress, version } = getAddressForWhat(address)
-
+           
+          //loads all the coin amounts
           if (key && lpMintAddress) {
             const poolInfo = liquidityPools[lpMintAddress]
 
@@ -214,6 +220,7 @@ export async function loadPools(conn)  {
               }
               // getLpSupply
               case 'lpMintAddress': {
+                console.log('lpMintAddress');
                 const parsed = MINT_LAYOUT.decode(data)
 
                 poolInfo.lp.totalSupply = new TokenAmount(parsed.supply.toNumber(), poolInfo.lp.decimals)
@@ -225,5 +232,5 @@ export async function loadPools(conn)  {
         }
       })
 
-      return liquidityPools;
+      return liquidityPools[savedMintAddress];
   }
