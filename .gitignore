@@ -6,3 +6,7 @@ pool.js
 swap.js
 tokens.js
 trade-script.js
+instructions.js
+layouts.js
+inputs.js
+txns.js

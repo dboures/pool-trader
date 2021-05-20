@@ -33,12 +33,9 @@ export interface LiquidityPoolInfo {
     ammAuthority: string
     ammOpenOrders: string
     ammTargetOrders: string
-    ammQuantities: string
   
     poolCoinTokenAccount: string
     poolPcTokenAccount: string
-    poolWithdrawQueue: string
-    poolTempLpTokenAccount: string
   
     serumProgramId: string
     serumMarket: string
